@@ -1,0 +1,175 @@
+/*
+ *  
+ *  Copyright (C) 2010, 2011, 2012 The Europa Barbarorum Team
+ *  All rights reserved.
+ *  
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
+ *      * Redistributions of source code must retain the above copyright
+ *        notice, this list of conditions and the following disclaimer.
+ *      * Redistributions in binary form must reproduce the above copyright
+ *        notice, this list of conditions and the following disclaimer in the
+ *        documentation and/or other materials provided with the distribution.
+ *      * Neither the name of The Europa Barbarorum Team nor the
+ *        names of other contributors may be used to endorse or promote products
+ *        derived from this software without specific prior written permission.
+ *  
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL The Europa Barbarorum Team BE LIABLE FOR ANY
+ *  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  
+ */
+
+/*
+ * ReplacementPanel.java
+ *
+ * Created on Sep 20, 2010, 6:09:05 PM
+ */
+package org.europabarbarorum.cuf.gui.support;
+
+import java.awt.LayoutManager;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
+/**
+ * A GUI component to hold a {@link JComponent} that can be swapped for another panel at runtime.
+ * @param <J> the type of {@link JComponent} that this component holds.
+ * @author Johan Ouwerkerk
+ */
+public class ReplacementPanel<J extends JComponent> extends JPanel {
+
+    /** 
+     * Create a new {@link ReplacementPanel}.
+     */
+    public ReplacementPanel () {
+        state = State.PreInit;
+        initComponents();
+        getLayout().setHonorsVisibility(false);
+    }
+    private State state;
+
+    private enum State {
+
+        PreInit,
+        PreLayout,
+        PostLayout,
+        PostSwap;
+    }
+
+    /**
+     * Check if this {@link ReplacementPanel} has a component set.
+     * @return true if {@link #swap(javax.swing.JComponent) swap} has been called at least once, 
+     * false if not.
+     */
+    public boolean containsPanel() {
+        return state==State.PostSwap;
+    }
+
+    /**
+     * Get the {@link GroupLayout} used by this panel.
+     * @return the {@link GroupLayout} used by this panel.
+     */
+    @Override
+    public final GroupLayout getLayout () {
+        return (GroupLayout) super.getLayout();
+    }
+
+    /**
+     * Get the {@link JComponent} held inside this {@link ReplacementPanel}.
+     * @return the panel currently held inside this {@link ReplacementPanel}.
+     * @see #swap(javax.swing.JComponent)
+     */
+    @SuppressWarnings("unchecked")
+    public J panel () {
+        return (J) replacement;
+    }
+
+    /**
+     * Set the {@link LayoutManager} to use by this component. This method will work
+     * only once (when the component is constructed) and subsequently do nothing but write a
+     * debug message to the console/log.
+     * @param mgr the {@link LayoutManager} to use. Must be {@link GroupLayout}.
+     */
+    @Override
+    public void setLayout (LayoutManager mgr) {
+        if (mgr instanceof GroupLayout && state == State.PreLayout) {
+            super.setLayout(mgr);
+            state = State.PostLayout;
+        }
+    }
+
+    /**
+     * Swap out the currently held {@link JComponent} in favour of a new one.
+     * @param panel the new {@link JComponent} to hold.
+     * @return the previously held {@link JComponent}.
+     * This method returns null if no previous {@link JComponent}
+     * has been added in yet.
+     * @see #panel()
+     */
+    @SuppressWarnings("unchecked")
+    public J swap (J panel) {
+        boolean returns = state == State.PostSwap;
+        JComponent old = replacement;
+        getLayout().replace(replacement, panel);
+        replacement = (JComponent) panel;
+        state = State.PostSwap;
+        return returns ? (J) old : null;
+    }
+    private JComponent replacement;
+
+    private void preSwap (JComponent base) {
+        this.replacement = base;
+        state = State.PreLayout;
+    }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        JPanel replacement = new JPanel();
+
+        setName("Form"); // NOI18N
+
+        replacement.setName("replacement"); // NOI18N
+
+        GroupLayout replacementLayout = new GroupLayout(replacement);
+        replacement.setLayout(replacementLayout);
+        replacementLayout.setHorizontalGroup(
+            replacementLayout.createParallelGroup(Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        replacementLayout.setVerticalGroup(
+            replacementLayout.createParallelGroup(Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        preSwap(replacement);
+
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addComponent(replacement, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addComponent(replacement, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+    }// </editor-fold>//GEN-END:initComponents
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // End of variables declaration//GEN-END:variables
+}

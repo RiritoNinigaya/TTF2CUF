@@ -1,0 +1,677 @@
+/*
+ *
+ *  Copyright (C) 2010, 2011, 2012 The Europa Barbarorum Team
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
+ *      * Redistributions of source code must retain the above copyright
+ *        notice, this list of conditions and the following disclaimer.
+ *      * Redistributions in binary form must reproduce the above copyright
+ *        notice, this list of conditions and the following disclaimer in the
+ *        documentation and/or other materials provided with the distribution.
+ *      * Neither the name of The Europa Barbarorum Team nor the
+ *        names of other contributors may be used to endorse or promote products
+ *        derived from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL The Europa Barbarorum Team BE LIABLE FOR ANY
+ *  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ *  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+/*
+ * CompileDialog.java
+ *
+ * Created on Jul 1, 2010, 10:24:13 AM
+ */
+package org.europabarbarorum.cuf.gui;
+
+import org.europabarbarorum.cuf.gui.support.SettingField;
+import org.europabarbarorum.cuf.gui.support.FileType;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.nio.charset.Charset;
+import java.util.ResourceBundle;
+import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+import org.europabarbarorum.cuf.gui.support.FileInput.Access;
+import org.europabarbarorum.cuf.gui.support.SettingOption.DropDown;
+import org.europabarbarorum.cuf.gui.support.UIHelp.Dialog;
+import org.europabarbarorum.cuf.gui.support.FileInput;
+import org.europabarbarorum.cuf.shell.Shell;
+import org.europabarbarorum.cuf.shell.StringsToolkit;
+import org.europabarbarorum.cuf.strings.StringsWriter.EmptyStringOption;
+import org.europabarbarorum.cuf.strings.StringsWriter.FormatOption;
+import org.europabarbarorum.cuf.strings.impl.RawHandler.LineBreakOption;
+import org.europabarbarorum.cuf.strings.impl.RawHandler.NullCharacterOption;
+import org.europabarbarorum.cuf.strings.impl.RawHandler.SpaceSequenceOption;
+import org.europabarbarorum.cuf.strings.impl.RawHandler.TabOption;
+import org.europabarbarorum.cuf.strings.impl.SAXHandler.IgnorableWhitespaceOption;
+import org.europabarbarorum.cuf.strings.impl.URIResolver;
+import org.europabarbarorum.cuf.support.DefaultOption;
+import org.europabarbarorum.cuf.support.ResourceHelp.BundleKey;
+
+/**
+ * A {@link Dialog} which allows the user to compile XML files to Strings files.
+ * @author Johan Ouwerkerk
+ */
+public class CompileDialog extends Dialog {
+
+    /** Creates new form CompileDialog
+     * @param parent parent window
+     * @param modal  whether or not the dialog is modal
+     * @param shell context {@link Shell} from which the dialog is spawned
+     */
+    public CompileDialog (java.awt.Frame parent, boolean modal, Shell shell) {
+        super(parent, modal);
+        this.xslInput = new FileInput(FileType.XSLT.derive(true, true),
+                                      Access.Read, shell, this);
+        this.xmlInput = new FileInput(FileType.XML.derive(false, true),
+                                      Access.Read, shell, this);
+        this.outInput = new FileInput(FileType.Strings.derive(false, true),
+                                      Access.Write, shell,
+                                      this);
+        initComponents();
+        xmlInput.focusButton(true);
+        this.shell = shell;
+    }
+
+    @Override
+    protected void close () {
+        xmlInput.dispose();
+        xslInput.dispose();
+        outInput.dispose();
+        super.close();
+    }
+    private final Shell shell;
+    private FileInput xslInput, xmlInput, outInput;
+
+    /** This method is called from within the constructor to
+     * initialise the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        ButtonGroup dialogActions = new ButtonGroup(); // NOI18N
+        JLabel fileLabel = new JLabel();
+        SettingField fileField = this.xmlInput.getTextField();
+        JButton fileButton = this.xmlInput.getButton();
+        options = new JTabbedPane();
+        JPanel dataFormatOptions = new JPanel();
+        JLabel emptyStringsLabel = new JLabel();
+        emptyStringOption = new DropDown(EmptyStringOption.values(),CompileDialog.class,EmptyStringOption.class);
+        JLabel formatLabel = new JLabel();
+        formatOption = new DropDown(FormatOption.values(),CompileDialog.class, FormatOption.class);
+        JLabel uriLabel = new JLabel();
+        uriOption = new DropDown(ResolverType.values(),CompileDialog.class,ResolverType.class);
+        JLabel ignorableLabel = new JLabel();
+        ignorableOption = new DropDown(IgnorableWhitespaceOption.values(),CompileDialog.class, IgnorableWhitespaceOption.class);
+        JPanel postProcessOptions = new JPanel();
+        JLabel spaceLabel = new JLabel();
+        spaceOption = new DropDown(SpaceSequenceOption.values(),CompileDialog.class, SpaceSequenceOption.class);
+        JLabel tabLabel = new JLabel();
+        tabOption = new DropDown(TabOption.values(),CompileDialog.class,TabOption.class);
+        JLabel nullLabel = new JLabel();
+        nullOption = new DropDown(NullCharacterOption.values(),CompileDialog.class,NullCharacterOption.class);
+        JLabel linebreakLabel = new JLabel();
+        linebreakOption = new DropDown(LineBreakOption.values(),CompileDialog.class, LineBreakOption.class);
+        JPanel encodingOptions = new JPanel();
+        xmlEncodingField = new SettingField();
+        JLabel xmlEncodingLabel = new JLabel();
+        xslEncodingField = new SettingField();
+        JLabel xslEncodingLabel = new JLabel();
+        JButton cancelButton = new JButton();
+        JButton compileButton = new JButton();
+        JLabel saveLabel = new JLabel();
+        SettingField saveField = this.outInput.getTextField();
+        JButton saveButton = this.outInput.getButton();
+        JLabel xslLabel = new JLabel();
+        SettingField xslField = this.xslInput.getTextField();
+        JButton xslButtton = this.xslInput.getButton();
+
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        ResourceBundle bundle = ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI");
+        setTitle(bundle.getString("CompileDialog.title")); // NOI18N
+        setName("Form"); // NOI18N
+
+        fileLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.fileLabel.mnemonic").charAt(0));
+        fileLabel.setLabelFor(fileField);
+        fileLabel.setText(bundle.getString("CompileDialog.fileLabel.text")); // NOI18N
+        fileLabel.setToolTipText(bundle.getString("CompileDialog.fileLabel.toolTipText")); // NOI18N
+        fileLabel.setName("fileLabel"); // NOI18N
+
+        fileField.setText(bundle.getString("CompileDialog.fileField.text")); // NOI18N
+        fileField.setName("fileField"); // NOI18N
+        fileField.setRequestFocusEnabled(false);
+
+        fileButton.setMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.fileButton.mnemonic").charAt(0));
+        fileButton.setText(bundle.getString("CompileDialog.fileButton.text")); // NOI18N
+        fileButton.setToolTipText(bundle.getString("CompileDialog.fileButton.toolTipText")); // NOI18N
+        fileButton.setDefaultCapable(false);
+        fileButton.setName("fileButton"); // NOI18N
+        fileButton.setRequestFocusEnabled(false);
+
+        options.setName("options"); // NOI18N
+
+        dataFormatOptions.setName("dataFormatOptions"); // NOI18N
+
+        emptyStringsLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.emptyStringsLabel.mnemonic").charAt(0));
+        emptyStringsLabel.setLabelFor(emptyStringOption);
+        emptyStringsLabel.setText(bundle.getString("CompileDialog.emptyStringsLabel.text")); // NOI18N
+        emptyStringsLabel.setToolTipText(bundle.getString("CompileDialog.emptyStringsLabel.toolTipText")); // NOI18N
+        emptyStringsLabel.setName("emptyStringsLabel"); // NOI18N
+
+        emptyStringOption.setName("emptyStringOption"); // NOI18N
+
+        formatLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.formatLabel.mnemonic").charAt(0));
+        formatLabel.setText(bundle.getString("CompileDialog.formatLabel.text")); // NOI18N
+        formatLabel.setToolTipText(bundle.getString("CompileDialog.formatLabel.toolTipText")); // NOI18N
+        formatLabel.setName("formatLabel"); // NOI18N
+
+        formatOption.setName("formatOption"); // NOI18N
+
+        uriLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.uriLabel.mnemonic").charAt(0));
+        uriLabel.setText(bundle.getString("CompileDialog.uriLabel.text")); // NOI18N
+        uriLabel.setToolTipText(bundle.getString("CompileDialog.uriLabel.toolTipText")); // NOI18N
+        uriLabel.setName("uriLabel"); // NOI18N
+
+        uriOption.setName("uriOption"); // NOI18N
+
+        ignorableLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.ignorableLabel.mnemonic").charAt(0));
+        ignorableLabel.setText(bundle.getString("CompileDialog.ignorableLabel.text")); // NOI18N
+        ignorableLabel.setToolTipText(bundle.getString("CompileDialog.ignorableLabel.toolTipText")); // NOI18N
+        ignorableLabel.setName("ignorableLabel"); // NOI18N
+
+        ignorableOption.setName("ignorableOption"); // NOI18N
+
+        GroupLayout dataFormatOptionsLayout = new GroupLayout(dataFormatOptions);
+        dataFormatOptions.setLayout(dataFormatOptionsLayout);
+        dataFormatOptionsLayout.setHorizontalGroup(
+            dataFormatOptionsLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(dataFormatOptionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(dataFormatOptionsLayout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(dataFormatOptionsLayout.createSequentialGroup()
+                        .addGroup(dataFormatOptionsLayout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(emptyStringsLabel)
+                            .addComponent(formatLabel)
+                            .addComponent(uriLabel))
+                        .addPreferredGap(ComponentPlacement.RELATED, 139, Short.MAX_VALUE)
+                        .addGroup(dataFormatOptionsLayout.createParallelGroup(Alignment.TRAILING)
+                            .addComponent(formatOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(emptyStringOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(uriOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(dataFormatOptionsLayout.createSequentialGroup()
+                        .addComponent(ignorableLabel)
+                        .addPreferredGap(ComponentPlacement.RELATED, 139, Short.MAX_VALUE)
+                        .addComponent(ignorableOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+
+        dataFormatOptionsLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {emptyStringOption, formatOption, ignorableOption, uriOption});
+
+        dataFormatOptionsLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {emptyStringsLabel, formatLabel, ignorableLabel, uriLabel});
+
+        dataFormatOptionsLayout.setVerticalGroup(
+            dataFormatOptionsLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(dataFormatOptionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(dataFormatOptionsLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(formatLabel)
+                    .addComponent(formatOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(dataFormatOptionsLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(emptyStringsLabel)
+                    .addComponent(emptyStringOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(dataFormatOptionsLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(uriLabel)
+                    .addComponent(uriOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(dataFormatOptionsLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(ignorableLabel)
+                    .addComponent(ignorableOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(31, Short.MAX_VALUE))
+        );
+
+        dataFormatOptionsLayout.linkSize(SwingConstants.VERTICAL, new Component[] {emptyStringsLabel, formatLabel, ignorableLabel, uriLabel});
+
+        dataFormatOptionsLayout.linkSize(SwingConstants.VERTICAL, new Component[] {emptyStringOption, formatOption, ignorableOption, uriOption});
+
+        options.addTab(bundle.getString("CompileDialog.dataFormatOptions.TabConstraints.tabTitle"), dataFormatOptions); // NOI18N
+
+        postProcessOptions.setName("postProcessOptions"); // NOI18N
+
+        spaceLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.spaceLabel.mnemonic").charAt(0));
+        spaceLabel.setLabelFor(spaceOption);
+        spaceLabel.setText(bundle.getString("CompileDialog.spaceLabel.text")); // NOI18N
+        spaceLabel.setToolTipText(bundle.getString("CompileDialog.spaceLabel.toolTipText")); // NOI18N
+        spaceLabel.setName("spaceLabel"); // NOI18N
+
+        spaceOption.setName("spaceOption"); // NOI18N
+
+        tabLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.tabLabel.mnemonic").charAt(0));
+        tabLabel.setLabelFor(tabOption);
+        tabLabel.setText(bundle.getString("CompileDialog.tabLabel.text")); // NOI18N
+        tabLabel.setToolTipText(bundle.getString("CompileDialog.tabLabel.toolTipText")); // NOI18N
+        tabLabel.setName("tabLabel"); // NOI18N
+
+        tabOption.setName("tabOption"); // NOI18N
+
+        nullLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.nullLabel.mnemonic").charAt(0));
+        nullLabel.setLabelFor(nullOption);
+        nullLabel.setText(bundle.getString("CompileDialog.nullLabel.text")); // NOI18N
+        nullLabel.setToolTipText(bundle.getString("CompileDialog.nullLabel.toolTipText")); // NOI18N
+        nullLabel.setName("nullLabel"); // NOI18N
+
+        nullOption.setName("nullOption"); // NOI18N
+
+        linebreakLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.linebreakLabel.mnemonic").charAt(0));
+        linebreakLabel.setLabelFor(linebreakOption);
+        linebreakLabel.setText(bundle.getString("CompileDialog.linebreakLabel.text")); // NOI18N
+        linebreakLabel.setToolTipText(bundle.getString("CompileDialog.linebreakLabel.toolTipText")); // NOI18N
+        linebreakLabel.setName("linebreakLabel"); // NOI18N
+
+        linebreakOption.setName("linebreakOption"); // NOI18N
+
+        GroupLayout postProcessOptionsLayout = new GroupLayout(postProcessOptions);
+        postProcessOptions.setLayout(postProcessOptionsLayout);
+        postProcessOptionsLayout.setHorizontalGroup(
+            postProcessOptionsLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(postProcessOptionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(postProcessOptionsLayout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(postProcessOptionsLayout.createSequentialGroup()
+                        .addComponent(spaceLabel)
+                        .addPreferredGap(ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
+                        .addComponent(spaceOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(postProcessOptionsLayout.createSequentialGroup()
+                        .addComponent(tabLabel)
+                        .addPreferredGap(ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
+                        .addComponent(tabOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(postProcessOptionsLayout.createSequentialGroup()
+                        .addComponent(nullLabel)
+                        .addPreferredGap(ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
+                        .addComponent(nullOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(postProcessOptionsLayout.createSequentialGroup()
+                        .addComponent(linebreakLabel)
+                        .addPreferredGap(ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
+                        .addComponent(linebreakOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+
+        postProcessOptionsLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {linebreakLabel, nullLabel, spaceLabel, tabLabel});
+
+        postProcessOptionsLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {linebreakOption, nullOption, spaceOption, tabOption});
+
+        postProcessOptionsLayout.setVerticalGroup(
+            postProcessOptionsLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(postProcessOptionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(postProcessOptionsLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(spaceLabel)
+                    .addComponent(spaceOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(postProcessOptionsLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(tabLabel)
+                    .addComponent(tabOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(postProcessOptionsLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(nullLabel)
+                    .addComponent(nullOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(postProcessOptionsLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(linebreakLabel)
+                    .addComponent(linebreakOption, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(31, Short.MAX_VALUE))
+        );
+
+        postProcessOptionsLayout.linkSize(SwingConstants.VERTICAL, new Component[] {linebreakLabel, nullLabel, spaceLabel, tabLabel});
+
+        postProcessOptionsLayout.linkSize(SwingConstants.VERTICAL, new Component[] {linebreakOption, nullOption, spaceOption, tabOption});
+
+        options.addTab(bundle.getString("CompileDialog.postProcessOptions.TabConstraints.tabTitle"), postProcessOptions); // NOI18N
+
+        encodingOptions.setName("encodingOptions"); // NOI18N
+
+        xmlEncodingField.setText(bundle.getString("CompileDialog.xmlEncodingField.text")); // NOI18N
+        xmlEncodingField.setToolTipText(bundle.getString("CompileDialog.xmlEncodingField.toolTipText")); // NOI18N
+        xmlEncodingField.setName("xmlEncodingField"); // NOI18N
+
+        xmlEncodingLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.xmlEncodingLabel.mnemonic").charAt(0));
+        xmlEncodingLabel.setLabelFor(xmlEncodingField);
+        xmlEncodingLabel.setText(bundle.getString("CompileDialog.xmlEncodingLabel.text")); // NOI18N
+        xmlEncodingLabel.setToolTipText(bundle.getString("CompileDialog.xmlEncodingLabel.toolTipText")); // NOI18N
+        xmlEncodingLabel.setName("xmlEncodingLabel"); // NOI18N
+
+        xslEncodingField.setText(bundle.getString("CompileDialog.xslEncodingField.text")); // NOI18N
+        xslEncodingField.setToolTipText(bundle.getString("CompileDialog.xslEncodingField.toolTipText")); // NOI18N
+        xslEncodingField.setName("xslEncodingField"); // NOI18N
+
+        xslEncodingLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.xslEncodingLabel.mnemonic").charAt(0));
+        xslEncodingLabel.setLabelFor(xslEncodingField);
+        xslEncodingLabel.setText(bundle.getString("CompileDialog.xslEncodingLabel.text")); // NOI18N
+        xslEncodingLabel.setName("xslEncodingLabel"); // NOI18N
+
+        GroupLayout encodingOptionsLayout = new GroupLayout(encodingOptions);
+        encodingOptions.setLayout(encodingOptionsLayout);
+        encodingOptionsLayout.setHorizontalGroup(
+            encodingOptionsLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(encodingOptionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(encodingOptionsLayout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(xmlEncodingLabel)
+                    .addComponent(xslEncodingLabel))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(encodingOptionsLayout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(xslEncodingField, GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+                    .addComponent(xmlEncodingField, GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
+                .addGap(26, 26, 26))
+        );
+        encodingOptionsLayout.setVerticalGroup(
+            encodingOptionsLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(encodingOptionsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(encodingOptionsLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(xmlEncodingLabel)
+                    .addComponent(xmlEncodingField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(encodingOptionsLayout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(xslEncodingField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xslEncodingLabel))
+                .addContainerGap(95, Short.MAX_VALUE))
+        );
+
+        options.addTab(bundle.getString("CompileDialog.encodingOptions.TabConstraints.tabTitle"), encodingOptions); // NOI18N
+
+        cancelButton.addActionListener(closeListener);
+        cancelButton.setMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.cancelButton.mnemonic").charAt(0));
+        cancelButton.setText(bundle.getString("CompileDialog.cancelButton.text")); // NOI18N
+        cancelButton.setHideActionText(true);
+        cancelButton.setName("cancelButton"); // NOI18N
+        cancelButton.setSelected(true);
+
+        compileButton.setMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.compileButton.mnemonic").charAt(0));
+        compileButton.setText(bundle.getString("CompileDialog.compileButton.text")); // NOI18N
+        compileButton.setDefaultCapable(false);
+        compileButton.setHideActionText(true);
+        compileButton.setName("compileButton"); // NOI18N
+        compileButton.setRequestFocusEnabled(false);
+        compileButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                compileButtonActionPerformed(evt);
+            }
+        });
+
+        saveLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.saveLabel.mnemonic").charAt(0));
+        saveLabel.setLabelFor(saveField);
+        saveLabel.setText(bundle.getString("CompileDialog.saveLabel.text")); // NOI18N
+        saveLabel.setName("saveLabel"); // NOI18N
+
+        saveField.setText(bundle.getString("CompileDialog.saveField.text")); // NOI18N
+        saveField.setName("saveField"); // NOI18N
+
+        saveButton.setMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.saveButton.mnemonic").charAt(0));
+        saveButton.setText(bundle.getString("CompileDialog.saveButton.text")); // NOI18N
+        saveButton.setToolTipText(bundle.getString("CompileDialog.saveButton.toolTipText")); // NOI18N
+        saveButton.setName("saveButton"); // NOI18N
+
+        xslLabel.setDisplayedMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.xslLabel.mnemonic").charAt(0));
+        xslLabel.setLabelFor(xslField);
+        xslLabel.setText(bundle.getString("CompileDialog.xslLabel.text")); // NOI18N
+        xslLabel.setToolTipText(bundle.getString("CompileDialog.xslLabel.toolTipText")); // NOI18N
+        xslLabel.setName("xslLabel"); // NOI18N
+
+        xslField.setText(bundle.getString("CompileDialog.xslField.text")); // NOI18N
+        xslField.setName("xslField"); // NOI18N
+
+        xslButtton.setMnemonic(ResourceBundle.getBundle("org/europabarbarorum/cuf/gui/CompileDialogUI").getString("CompileDialog.xslButtton.mnemonic").charAt(0));
+        xslButtton.setText(bundle.getString("CompileDialog.xslButtton.text")); // NOI18N
+        xslButtton.setToolTipText(bundle.getString("CompileDialog.xslButtton.toolTipText")); // NOI18N
+        xslButtton.setName("xslButtton"); // NOI18N
+
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(options, GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(saveLabel)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(saveField, GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                                    .addComponent(fileLabel, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(xslLabel))
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                                    .addComponent(xslField, GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                                    .addComponent(fileField, GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE))))
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                                .addComponent(saveButton)
+                                .addComponent(fileButton))
+                            .addComponent(xslButtton)))
+                    .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(182, Short.MAX_VALUE)
+                        .addComponent(compileButton)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(cancelButton)))
+                .addContainerGap())
+        );
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {fileButton, saveButton, xslButtton});
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {fileLabel, saveLabel, xslLabel});
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {cancelButton, compileButton});
+
+        layout.setVerticalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(fileLabel)
+                    .addComponent(fileField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fileButton))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(xslLabel)
+                    .addComponent(xslButtton)
+                    .addComponent(xslField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(saveLabel)
+                    .addComponent(saveField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(saveButton))
+                .addGap(18, 18, 18)
+                .addComponent(options, GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(compileButton, Alignment.TRAILING)
+                    .addComponent(cancelButton, Alignment.TRAILING))
+                .addContainerGap())
+        );
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {cancelButton, compileButton});
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {fileField, saveField, xslField});
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {fileButton, saveButton, xslButtton});
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {fileLabel, saveLabel, xslLabel});
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void compileButtonActionPerformed (ActionEvent evt) {//GEN-FIRST:event_compileButtonActionPerformed
+
+        if (canCompile()) {
+            triggerCompilation();
+            close();
+        }
+
+    }//GEN-LAST:event_compileButtonActionPerformed
+
+    private boolean canCompile () {
+        /*
+         * ensure that all items that may be invalid are checked *and* marked.
+         * doing this in one bing && chain does not work properly
+         * due to short-circuiting.
+         */
+        boolean c1 = checkEncoding(xmlEncodingField),
+                c2 = checkEncoding(xslEncodingField),
+                c3 = xslInput.check(),
+                c4 = outInput.check(),
+                c5 = xmlInput.check();
+        // return the answer.
+        return c1 && c2 && c3 && c4 && c5;
+    }
+
+    private boolean checkEncoding (SettingField field) {
+        field.drop();
+        String encoding = field.getValue();
+        if (encoding == null) {
+            return true;
+        }
+        else {
+            try {
+                return Charset.isSupported(encoding) ? true : markEncodingError(
+                        Messages.UnsupportedEncoding, field);
+
+            }
+            catch (Exception e) {
+                return markEncodingError(Messages.InvalidEncodingFormat, field);
+            }
+        }
+    }
+
+    private boolean markEncodingError (BundleKey err, SettingField field) {
+        field.reset(err.getText());
+        options.setSelectedIndex(2); // select encoding tab
+        return false;
+    }
+
+    private void triggerCompilation () {
+        StringsToolkit kit = new StringsToolkit(shell);
+        kit.whitespaceMode(getOption(ignorableOption));
+        kit.spaceMode(getOption(spaceOption));
+        kit.tabMode(getOption(tabOption));
+        kit.nullCharMode(getOption(nullOption));
+        kit.linebreakMode(getOption(linebreakOption));
+        kit.emptyStringMode(getOption(emptyStringOption));
+        String filePath = xmlInput.getValue();
+        String savePath = outInput.getValue();
+        String xslPath = xslInput.getValue();
+
+        kit.encoding(xmlEncodingField.getValue());
+        if (xslPath != null) {
+            kit.useXSLT(xslPath, xslEncodingField.getValue());
+        }
+        URIResolver resolver =
+                ((ResolverType) getCompileOption(uriOption)).getResolver(kit,
+                                                                         filePath);
+        boolean order = getCompileOption(formatOption) == FormatOption.Ordered;
+        kit.compile(filePath, savePath, resolver, order).submit();
+    }
+
+    private DefaultOption getCompileOption (JComboBox internal) {
+       return ((DropDown) internal).getModel().getSelectedItem().opt;
+    }
+
+    private String getOption (JComboBox internal) {
+        return getCompileOption(internal).name();
+    }
+
+    /**
+     * Displays a modal {@link CompileDialog}.
+     * @param parent the parent window on top of which the dialog should be shown
+     * @param host the context {@link Shell} from which the dialog is spawned.
+     */
+    public static void display (final JFrame parent, final Shell host) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            @Override
+            public void run () {
+                CompileDialog dialog = new CompileDialog(parent, true, host);
+                dialog.setVisible(true);
+            }
+        });
+    }
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    protected JComboBox emptyStringOption;
+    protected JComboBox formatOption;
+    protected JComboBox ignorableOption;
+    protected JComboBox linebreakOption;
+    protected JComboBox nullOption;
+    JTabbedPane options;
+    protected JComboBox spaceOption;
+    protected JComboBox tabOption;
+    protected JComboBox uriOption;
+    SettingField xmlEncodingField;
+    SettingField xslEncodingField;
+    // End of variables declaration//GEN-END:variables
+
+    private enum ResolverType implements DefaultOption {
+
+        Basic,
+        Escapes,
+        Width;
+
+        @Override
+        public DefaultOption defaultOption () {
+            return Basic;
+        }
+
+        /**
+         * Convert this option to an {@link URIResolver}.
+         * @param tk the {@link StringsToolkit} which provides implementations for
+         * constructing an {@link URIResolver}.
+         * @param src the file that provides a context for parsing relative paths in the
+         * {@link URIResolver} to be created.
+         * @return an {@link URIResolver} implementation corresponding to this
+         * {@link ResolverType} option.
+         */
+        public URIResolver getResolver (StringsToolkit tk, String src) {
+            switch (this) {
+                case Basic:
+                    return tk.uriResolver(src, false);
+                case Escapes:
+                    return tk.uriResolver(src, true);
+                case Width:
+                    return tk.xmlWidthResolver(src);
+                default:
+                    return null;
+            }
+        }
+    }
+}
